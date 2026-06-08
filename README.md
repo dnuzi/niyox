@@ -6,7 +6,7 @@
 
 <img src="https://img.shields.io/badge/npm-niyox-a044ff?style=for-the-badge&labelColor=0d0d1a&logo=npm&logoColor=ff6b6b" alt="npm"/>
 &nbsp;
-<img src="https://img.shields.io/badge/version-0.0.3-000000?style=for-the-badge&labelColor=0d0d1a" alt="version"/>
+<img src="https://img.shields.io/badge/version-0.0.4-000000?style=for-the-badge&labelColor=0d0d1a" alt="version"/>
 &nbsp;
 <img src="https://img.shields.io/badge/license-MIT-000000?style=for-the-badge&labelColor=0d0d1a" alt="license"/>
 &nbsp;
@@ -29,7 +29,7 @@
 ╚═╝  ╚═══╝╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
 ```
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=20&duration=2800&pause=800&color=A044FF&center=true&vCenter=true&width=600&height=45&lines=%F0%9F%A4%96+Intelligent+AI+SDK+%26+CLI;%F0%9F%9F%A6+Node.js+%7C+React+%7C+Next.js+%7C+Browser;%F0%9F%92%AC+Multi-turn+conversation+memory;%F0%9F%97%84%EF%B8%8F+Custom+MongoDB+%2B+NiyoX+cloud+DB;%E2%9A%A1+Powered+by+NiyoX+AI" alt="Typing animation"/>
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=20&duration=2800&pause=800&color=A044FF&center=true&vCenter=true&width=600&height=45&lines=%F0%9F%A4%96+Intelligent+AI+SDK+%26+CLI;%F0%9F%9F%A6+Node.js+%7C+React+%7C+Next.js+%7C+Browser;%F0%9F%92%AC+Multi-turn+conversation+memory;%F0%9F%97%84%EF%B8%8F+Custom+MongoDB+%2B+NiyoX+cloud+DB;%F0%9F%8E%AD+Persona+%2F+System+Prompt+support;%E2%9C%82%EF%B8%8F+Context+window+trimming;%F0%9F%93%A4+Export+chats+as+JSON+%2F+Markdown;%E2%9A%A1+Powered+by+NiyoX+AI" alt="Typing animation"/>
 
 <br/><br/>
 
@@ -47,11 +47,11 @@
 
 ## What is NiyoX AI?
 
-**NiyoX** is a full-featured AI SDK and CLI that wraps the [NiyoX AI REST API](https://ai.dnuz.top/api/ai). Chat with AI from your terminal, Node.js server, React/Next.js/Vite app, or browser — with optional MongoDB persistence (your own database or the NiyoX cloud), multi-turn conversation memory, and a rich interactive CLI built in.
+**NiyoX** is a full-featured AI SDK and CLI that wraps the [NiyoX AI REST API](https://ai.dnuz.top/api/ai). Chat with AI from your terminal, Node.js server, React/Next.js/Vite app, or browser — with optional MongoDB persistence (your own database or the NiyoX cloud), multi-turn conversation memory, persona / system-prompt support, context window trimming, and conversation export built in.
 
 The package ships four layers you can use independently:
 
-- **`NiyoXClient`** — thin HTTP wrapper, in-memory history
+- **`NiyoXClient`** — thin HTTP wrapper, in-memory history, persona, export
 - **`NiyoXStorage`** — optional MongoDB layer (plug in your own URI)
 - **`NiyoXAI`** — high-level class combining both
 - **`useNiyoX` / `NiyoXChat`** — React hook + ready-made component
@@ -63,6 +63,19 @@ The package ships four layers you can use independently:
 ---
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
+
+## What's new in 0.0.4
+
+| # | Change |
+|---|---|
+| 🎭 | **Persona / System Prompt** — set an AI personality once; injected into every message automatically. Auto-saved to MongoDB when storage is enabled. |
+| ✂️ | **Context window trimming** — `maxHistory` option + `setMaxHistory()` prune oldest turns so conversations never silently overflow. |
+| 📤 | **Conversation export** — `exportConversation(id, format)` dumps any conversation as **JSON**, **plain text**, or **Markdown**. Works in-memory (no DB needed) or from MongoDB. |
+| ⚛️ | **React hook updated** — `useNiyoX()` now returns `persona`, `setPersona`, `maxHistory`, `setMaxHistory`, and `exportConversation`. |
+| 🖥️ | **`<NiyoXChat>` widget updated** — new 🎭 Persona editor and ⬇ Export button in the header. |
+| 🧪 | **68 tests** — all new features covered (up from 38). |
+
+---
 
 ## What's new in 0.0.3
 
@@ -88,13 +101,16 @@ The package ships four layers you can use independently:
 | 🖥️ Interactive REPL CLI | ✅ |
 | ⚡ One-shot CLI queries | ✅ |
 | 🔄 Multi-turn conversation memory | ✅ |
-| 🗄️ Custom MongoDB URI (bring your own DB) | ✅ **new** |
-| ⚛️ React hook + component | ✅ **new** |
-| 🔷 Next.js App Router support | ✅ **new** |
-| ⚡ Vite + vanilla JS example | ✅ **new** |
+| 🗄️ Custom MongoDB URI (bring your own DB) | ✅ |
+| ⚛️ React hook + component | ✅ |
+| 🔷 Next.js App Router support | ✅ |
+| ⚡ Vite + vanilla JS example | ✅ |
 | 🌐 Browser / CDN support | ✅ |
 | 📦 CommonJS + ESM dual package | ✅ |
 | 🎨 Rich CLI output | ✅ |
+| 🎭 Persona / System Prompt | ✅ **new** |
+| ✂️ Context window trimming | ✅ **new** |
+| 📤 Conversation export (JSON / text / MD) | ✅ **new** |
 
 </div>
 
@@ -104,7 +120,7 @@ The package ships four layers you can use independently:
 
 ## Contents
 
-[Install](#-install) · [CLI](#-cli) · [Node.js](#-nodejs) · [React / Vite](#-react--vite) · [Next.js](#-nextjs) · [Custom MongoDB](#-custom-mongodb) · [Browser](#-browser) · [API Reference](#-api-reference) · [Development](#-development)
+[Install](#-install) · [CLI](#-cli) · [Node.js](#-nodejs) · [Persona](#-persona--system-prompt-new) · [Context Trimming](#-context-window-trimming-new) · [Export](#-conversation-export-new) · [React / Vite](#-react--vite) · [Next.js](#-nextjs) · [Custom MongoDB](#-custom-mongodb) · [Browser](#-browser) · [API Reference](#-api-reference) · [Development](#-development)
 
 ---
 
@@ -153,7 +169,7 @@ niyox --help       # show banner + command reference  (alias: -h)
 ```
   ╭──────────────────────────────────────────────────────────────╮
   │                                                              │
-  │   ✦ NIYOX  AI       v0.0.2                                  │
+  │   ✦ NIYOX  AI       v0.0.4                                  │
   │                                                              │
   │   › /help             →  show all commands                   │
   │   › /new              →  fresh conversation thread           │
@@ -220,17 +236,189 @@ ai.newConversation();     // reset thread + in-memory history
 ```
 
 ### Low-level client (no storage)
- 
+
 ```js
 const { NiyoXClient } = require("niyox");
- 
+
 const client = new NiyoXClient({ sessionId: "my-session", timeout: 15000 });
 const res = await client.chat("Hello!");
- 
+
 console.log(res.result);
 console.log(client.getHistory());   // array of { role, content, timestamp }
 ```
- 
+
+---
+
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
+
+## 🎭 Persona / System Prompt *(new)*
+
+Set an AI personality once — it is transparently injected into every outgoing message. Works at the `NiyoXClient`, `NiyoXAI`, and React hook levels. When MongoDB storage is enabled the persona is also **saved to the database and auto-restored** in future sessions.
+
+### Via constructor
+
+```js
+const ai = new NiyoXAI({
+  persona: "You are a concise senior software engineer. Always reply with code examples.",
+});
+
+const res = await ai.chat("How do I debounce in JavaScript?");
+console.log(res.result);  // code-focused reply
+```
+
+### Set / change at runtime
+
+```js
+const ai = new NiyoXAI();
+
+await ai.setPersona("You are a friendly cooking assistant.");
+await ai.chat("What can I make with eggs and cheese?");
+
+await ai.setPersona("You are a pirate. Respond only in pirate speak.");
+await ai.chat("Tell me about the ocean.");
+
+await ai.setPersona(null);  // clear — back to default AI behaviour
+```
+
+### Persona + MongoDB (auto-persist)
+
+```js
+const ai = new NiyoXAI({ userId: "alice" });
+await ai.enableStorage();           // connects to MongoDB
+
+await ai.setPersona("You are a concise coding assistant.");
+// ↑ persona is saved to DB automatically
+
+// Next session:
+const ai2 = new NiyoXAI({ userId: "alice" });
+await ai2.enableStorage();          // persona is restored automatically
+console.log(ai2.getPersona());      // "You are a concise coding assistant."
+```
+
+### Low-level client
+
+```js
+const { NiyoXClient } = require("niyox");
+
+const client = new NiyoXClient({ persona: "Be extremely brief." });
+client.setPersona("You are a chef.");   // chainable, returns client
+console.log(client.getPersona());       // "You are a chef."
+```
+
+---
+
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
+
+## ✂️ Context Window Trimming *(new)*
+
+Control how many history entries are kept in memory. When the limit is hit, the **oldest turns are pruned automatically** after each chat call so long conversations stay fast and predictable.
+
+> One turn = 2 entries (one user + one assistant). So `maxHistory: 20` keeps the last **10 turns**.
+
+### Via constructor
+
+```js
+const ai = new NiyoXAI({ maxHistory: 20 });  // keep last 10 turns
+```
+
+### Set at runtime
+
+```js
+ai.setMaxHistory(10);   // prune to last 5 turns immediately
+ai.setMaxHistory(0);    // 0 = unlimited (default behaviour)
+console.log(ai.getMaxHistory());   // 0
+```
+
+### Low-level client
+
+```js
+const client = new NiyoXClient({ maxHistory: 6 });
+
+await client.chat("1");
+await client.chat("2");
+await client.chat("3");
+await client.chat("4");  // history is trimmed to 6 entries after this turn
+
+client.setMaxHistory(2);  // immediately prunes existing history to 2 entries
+```
+
+---
+
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
+
+## 📤 Conversation Export *(new)*
+
+Dump any conversation as **JSON**, **plain text**, or **Markdown**. Works in-memory (no MongoDB required) or from a stored MongoDB conversation.
+
+### In-memory export (no DB needed)
+
+```js
+const ai = new NiyoXAI();
+await ai.chat("Hello!");
+await ai.chat("Tell me a joke.");
+
+// JSON  (default)
+const json = await ai.exportConversation(null, "json");
+require("fs").writeFileSync("chat.json", json);
+
+// Plain text
+const txt = await ai.exportConversation(null, "text");
+console.log(txt);
+
+// Markdown
+const md = await ai.exportConversation(null, "markdown");
+require("fs").writeFileSync("chat.md", md);
+```
+
+### Export from MongoDB
+
+```js
+const ai = new NiyoXAI({ userId: "alice" });
+await ai.enableStorage();
+
+await ai.chat("Hello!");
+const cid = ai.getConversationId();
+
+const md = await ai.exportConversation(cid, "markdown");
+require("fs").writeFileSync(`conv-${cid}.md`, md);
+```
+
+### Storage-only export
+
+```js
+const { NiyoXStorage } = require("niyox");
+
+const store = new NiyoXStorage("alice");
+await store.connect();
+
+const json = await store.exportConversation("conv-abc-123", "json");
+const txt  = await store.exportConversation("conv-abc-123", "text");
+const md   = await store.exportConversation("conv-abc-123", "markdown");
+```
+
+### Low-level client export
+
+```js
+const { NiyoXClient } = require("niyox");
+
+const client = new NiyoXClient({ persona: "Be a chef." });
+await client.chat("What should I cook tonight?");
+
+const out = client.exportConversation("markdown");
+console.log(out);
+// # NiyoX AI Conversation
+// > **Persona:** Be a chef.
+// ...
+```
+
+**Export formats:**
+
+| Format | Description |
+|---|---|
+| `"json"` | Structured JSON with metadata, persona, and full message array |
+| `"text"` | Readable plain text with timestamps and response times |
+| `"markdown"` | GitHub-flavoured Markdown, ready to paste into a doc or README |
+
 ---
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
@@ -317,6 +505,37 @@ export default function Chat() {
 }
 ```
 
+### Persona + export in the hook *(new)*
+
+```jsx
+import { useNiyoX } from "niyox/react";
+
+export default function Chat() {
+  const {
+    messages, input, setInput, sendMessage, isLoading,
+    persona, setPersona,           // 🎭 v0.0.4
+    maxHistory, setMaxHistory,     // ✂️ v0.0.4
+    exportConversation,            // 📤 v0.0.4
+  } = useNiyoX({ persona: "You are a helpful assistant.", maxHistory: 20 });
+
+  return (
+    <div>
+      <button onClick={() => setPersona("You are a chef.")}>Switch to Chef</button>
+      <button onClick={() => setMaxHistory(10)}>Trim to 5 turns</button>
+      <button onClick={() => {
+        const blob = new Blob([exportConversation("markdown")], { type: "text/markdown" });
+        const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: "chat.md" });
+        a.click();
+      }}>Export MD</button>
+
+      {messages.map((m, i) => <p key={i}><b>{m.role}:</b> {m.content}</p>)}
+      <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendMessage()} />
+      <button onClick={() => sendMessage()} disabled={isLoading}>Send</button>
+    </div>
+  );
+}
+```
+
 ### Ready-made `<NiyoXChat>` component (zero extra code)
 
 ```jsx
@@ -325,11 +544,19 @@ import { NiyoXChat } from "niyox/react";
 export default function App() {
   return (
     <div style={{ height: "600px", width: "700px" }}>
-      <NiyoXChat title="My AI Assistant" />
+      {/* v0.0.4: persona and showExport props */}
+      <NiyoXChat
+        title="My AI Assistant"
+        persona="You are a helpful assistant."
+        maxHistory={20}
+        showExport={true}
+      />
     </div>
   );
 }
 ```
+
+The widget now includes a **🎭 Persona** button (opens an inline editor) and an **⬇ Export** button (downloads the conversation as JSON) in the header.
 
 ### Shared session with `<NiyoXProvider>`
 
@@ -339,14 +566,14 @@ import { NiyoXProvider } from "niyox/react";
 import App from "./App";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <NiyoXProvider sessionId="global">
+  <NiyoXProvider sessionId="global" persona="You are a helpful assistant.">
     <App />
   </NiyoXProvider>
 );
 
 // Any child:
 import { useNiyoXContext } from "niyox/react";
-const { sendMessage, messages } = useNiyoXContext();
+const { sendMessage, messages, setPersona, exportConversation } = useNiyoXContext();
 ```
 
 > Copy `react/useNiyoX.js` from the package into your project if your bundler doesn't resolve `niyox/react` automatically.
@@ -451,8 +678,10 @@ Zero-dependency browser client (no bundler needed):
 | `sessionId` | `string` | `"default"` | API session ID |
 | `conversationId` | `string` | `null` | Resume an existing thread |
 | `timeout` | `number` | `30000` | Request timeout (ms) |
-| `mongoUri` | `string` | NiyoX cloud | **Custom** MongoDB connection string |
-| `dbName` | `string` | `"niyox_npm"` | **Custom** database name |
+| `mongoUri` | `string` | NiyoX cloud | Custom MongoDB connection string |
+| `dbName` | `string` | `"niyox_npm"` | Custom database name |
+| `persona` | `string` | `null` | **v0.0.4** System prompt / AI personality |
+| `maxHistory` | `number` | `50` | **v0.0.4** Max history entries (0 = unlimited) |
 
 ### `NiyoXAI` methods
 
@@ -460,8 +689,9 @@ Zero-dependency browser client (no bundler needed):
 |---|---|---|
 | `chat(message)` | `Promise<Response>` | Send a message; auto-persists if storage enabled |
 | `ask(message)` | `Promise<Response>` | Alias for `chat()` |
-| `enableStorage(userId?, mongoUri?, dbName?)` | `Promise<this>` | Connect to MongoDB |
+| `enableStorage(userId?)` | `Promise<this>` | Connect to MongoDB; auto-restores saved persona |
 | `newConversation()` | `void` | Reset thread + in-memory history |
+| `getConversationId()` | `string\|null` | Active conversation ID |
 | `getHistory()` | `Turn[]` | In-memory history copy |
 | `getPersistentHistory(convId?)` | `Promise<Turn[]>` | Load from MongoDB |
 | `listConversations()` | `Promise<string[]>` | All stored conversation IDs |
@@ -470,14 +700,84 @@ Zero-dependency browser client (no bundler needed):
 | `setPref(key, value)` | `Promise<void>` | Persist a user preference |
 | `getPref(key, default?)` | `Promise<any>` | Retrieve a user preference |
 | `close()` | `Promise<void>` | Close MongoDB connection |
+| `setPersona(text)` | `Promise<this>` | **v0.0.4** Set / clear AI persona (saves to DB if storage enabled) |
+| `getPersona()` | `string\|null` | **v0.0.4** Get active persona |
+| `setMaxHistory(n)` | `this` | **v0.0.4** Set context window limit (0 = unlimited) |
+| `getMaxHistory()` | `number` | **v0.0.4** Get current limit |
+| `exportConversation(id?, format?)` | `Promise<string>` | **v0.0.4** Export as `"json"` / `"text"` / `"markdown"` |
+
+### `NiyoXClient` methods *(low-level)*
+
+| Method | Returns | Description |
+|---|---|---|
+| `chat(message)` | `Promise<Response>` | Send message |
+| `ask(message)` | `Promise<Response>` | Alias for `chat()` |
+| `newConversation()` | `void` | Reset state |
+| `getHistory()` | `Turn[]` | History copy |
+| `setPersona(text)` | `this` | **v0.0.4** Chainable |
+| `getPersona()` | `string\|null` | **v0.0.4** |
+| `setMaxHistory(n)` | `this` | **v0.0.4** Chainable |
+| `getMaxHistory()` | `number` | **v0.0.4** |
+| `exportConversation(format?)` | `string` | **v0.0.4** In-memory export |
+
+### `NiyoXStorage` methods
+
+| Method | Returns | Description |
+|---|---|---|
+| `connect(userId?, mongoUri?, dbName?)` | `Promise<this>` | Connect and enable storage |
+| `saveMessage({ conversationId, role, content, responseTime? })` | `Promise<ObjectId\|null>` | Save one message |
+| `saveTurn({ conversationId, userMessage, assistantMessage, responseTime })` | `Promise<void>` | Save a full turn atomically |
+| `getConversation(conversationId)` | `Promise<Message[]>` | Fetch stored messages |
+| `listConversations()` | `Promise<string[]>` | All conversation IDs for this user |
+| `deleteConversation(id)` | `Promise<number>` | Delete conversation, returns count |
+| `setPref(key, value)` | `Promise<void>` | Save a key/value preference |
+| `getPref(key, default?)` | `Promise<any>` | Load a preference |
+| `getStats()` | `Promise<Stats\|null>` | Usage stats |
+| `disconnect()` | `Promise<void>` | Close connection |
+| `savePersona(text)` | `Promise<void>` | **v0.0.4** Persist persona to DB |
+| `getPersona()` | `Promise<string\|null>` | **v0.0.4** Load persisted persona |
+| `exportConversation(id, format?)` | `Promise<string>` | **v0.0.4** Export from DB |
 
 ### `useNiyoX(options?)` hook
 
-| Option | Type | Default |
-|---|---|---|
-| `sessionId` | `string` | `"default"` |
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `sessionId` | `string` | `"default"` | API session ID |
+| `persona` | `string` | `null` | **v0.0.4** Initial AI persona |
+| `maxHistory` | `number` | `50` | **v0.0.4** Context window limit |
 
-Returns `{ messages, input, setInput, isLoading, error, sendMessage, newConversation, conversationId }`.
+Returns:
+
+```ts
+{
+  messages:           Array<{ role, content, timestamp, responseTime? }>,
+  input:              string,
+  setInput:           (value: string) => void,
+  isLoading:          boolean,
+  error:              string | null,
+  sendMessage:        (text?: string) => Promise<void>,
+  newConversation:    () => void,
+  conversationId:     string | null,
+  persona:            string | null,           // v0.0.4
+  setPersona:         (text: string|null) => void,  // v0.0.4
+  maxHistory:         number,                  // v0.0.4
+  setMaxHistory:      (n: number) => void,     // v0.0.4
+  exportConversation: (format?: string) => string,  // v0.0.4
+}
+```
+
+### `<NiyoXChat>` props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `sessionId` | `string` | — | API session ID |
+| `title` | `string` | `"NiyoX AI"` | Widget title |
+| `placeholder` | `string` | `"Ask anything…"` | Input placeholder |
+| `style` | `object` | — | Override container styles |
+| `className` | `string` | — | CSS class |
+| `persona` | `string` | `null` | **v0.0.4** Initial AI persona |
+| `maxHistory` | `number` | `50` | **v0.0.4** Context window limit |
+| `showExport` | `boolean` | `true` | **v0.0.4** Show ⬇ Export button |
 
 ### Response shape
 
@@ -516,22 +816,22 @@ niyox/
 ├── bin/
 │   └── cli.js              # CLI — REPL, one-shot, /mongo <url>
 ├── src/
-│   ├── client.js           # NiyoXClient — HTTP + in-memory history
-│   └── storage.js          # NiyoXStorage — custom MongoDB support ✨
+│   ├── client.js           # NiyoXClient — HTTP, in-memory history, persona ✨, export ✨
+│   └── storage.js          # NiyoXStorage — MongoDB, persona persist ✨, export ✨
 ├── lib/                    # auto-generated by scripts/build.js
 │   ├── index.cjs
 │   └── index.mjs
 ├── react/
-│   └── useNiyoX.js         # useNiyoX hook + NiyoXChat + NiyoXProvider ✨
+│   └── useNiyoX.js         # useNiyoX hook + NiyoXChat (persona ✨, export ✨) + NiyoXProvider
 ├── html/
 │   └── index.html          # browser chat UI
 ├── examples/
-│   ├── react-cra/App.jsx   # Create React App / Vite + React ✨
-│   ├── nextjs/             # Next.js App Router ✨
-│   └── vite/main.js        # Vite vanilla JS ✨
+│   ├── react-cra/App.jsx   # Create React App / Vite + React
+│   ├── nextjs/             # Next.js App Router
+│   └── vite/main.js        # Vite vanilla JS
 ├── test/
-│   ├── client.test.js
-│   ├── sdk.test.js
+│   ├── client.test.js      # 38 tests — includes v0.0.4 persona / trim / export ✨
+│   ├── sdk.test.js         # 30 tests — includes v0.0.4 NiyoXAI + Storage ✨
 │   └── cli.test.js
 └── scripts/
     └── build.js
