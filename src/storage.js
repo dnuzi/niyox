@@ -1,17 +1,14 @@
-// src/storage.js — Optional MongoDB persistence layer
+// src/storage.js — Optional MongoDB persistence layer  v0.0.4
 "use strict";
 
 const DEFAULT_MONGO_URI = "mongodb+srv://danuzdev_db_user:eUcIyqvRaNEKnAtA@niyoxai.tzrs4rg.mongodb.net/";
 const DEFAULT_DB_NAME   = "niyox_npm";
 
-// Per-URI connection cache so multiple NiyoXStorage instances
-// pointing at the same DB share one MongoClient.
-const _cache = new Map(); // uri → { client, db }
+const _cache = new Map();
 
 async function getDb(uri = DEFAULT_MONGO_URI, dbName = DEFAULT_DB_NAME) {
   const cacheKey = `${uri}::${dbName}`;
   if (_cache.has(cacheKey)) return _cache.get(cacheKey).db;
-
   try {
     const { MongoClient } = require("mongodb");
     const client = new MongoClient(uri, { serverSelectionTimeoutMS: 5000 });
@@ -33,7 +30,6 @@ async function closeDb(uri = DEFAULT_MONGO_URI, dbName = DEFAULT_DB_NAME) {
   }
 }
 
-/** Close ALL open MongoDB connections (useful in tests / process exit) */
 async function closeAllDb() {
   for (const [, entry] of _cache) await entry.client.close();
   _cache.clear();
@@ -42,24 +38,11 @@ async function closeAllDb() {
 /**
  * NiyoXStorage — handles optional persistent chat/session storage.
  *
- * @example  Default (NiyoX cloud DB):
- *   const store = new NiyoXStorage("alice");
- *   await store.connect();
- *
- * @example  Your own MongoDB:
- *   const store = new NiyoXStorage("alice", {
- *     mongoUri: "mongodb+srv://user:pass@cluster.mongodb.net/",
- *     dbName:   "my_app_db",
- *   });
- *   await store.connect();
+ * v0.0.4 — Context & Memory additions:
+ *   • savePersona / getPersona   — persist AI persona per-user in MongoDB
+ *   • exportConversation         — export a stored conversation as JSON / text / markdown
  */
 class NiyoXStorage {
-  /**
-   * @param {string} userId  - Identifies the user; stored with every message.
-   * @param {object} options
-   * @param {string} [options.mongoUri]  - Custom MongoDB connection string.
-   * @param {string} [options.dbName]   - Database name (default: "niyox_npm").
-   */
   constructor(userId = "anonymous", options = {}) {
     this.userId   = userId;
     this.mongoUri = options.mongoUri || DEFAULT_MONGO_URI;
@@ -67,42 +50,27 @@ class NiyoXStorage {
     this.enabled  = false;
   }
 
-  /** @private */
   _getDb() { return getDb(this.mongoUri, this.dbName); }
 
-  /**
-   * Connect to MongoDB and enable storage.
-   * @param {string} [userId]         - Override the userId set in the constructor.
-   * @param {string} [mongoUri]       - Override the connection string at connect-time.
-   * @param {string} [dbName]         - Override the database name at connect-time.
-   */
   async connect(userId, mongoUri, dbName) {
     if (userId)   this.userId   = userId;
     if (mongoUri) this.mongoUri = mongoUri;
     if (dbName)   this.dbName   = dbName;
-    await this._getDb();   // throws if connection fails
+    await this._getDb();
     this.enabled = true;
     return this;
   }
 
-  /** Save a single message turn */
+  // ── Messages ─────────────────────────────────────────────────────────────
+
   async saveMessage({ conversationId, role, content, responseTime = null }) {
     if (!this.enabled) return null;
     const db   = await this._getDb();
-    const coll = db.collection("messages");
-    const doc  = {
-      userId:         this.userId,
-      conversationId,
-      role,
-      content,
-      responseTime,
-      createdAt: new Date(),
-    };
-    const res = await coll.insertOne(doc);
+    const doc  = { userId: this.userId, conversationId, role, content, responseTime, createdAt: new Date() };
+    const res  = await db.collection("messages").insertOne(doc);
     return res.insertedId;
   }
 
-  /** Save a full chat turn (user + assistant) atomically */
   async saveTurn({ conversationId, userMessage, assistantMessage, responseTime }) {
     if (!this.enabled) return;
     await Promise.all([
@@ -111,7 +79,6 @@ class NiyoXStorage {
     ]);
   }
 
-  /** Retrieve all messages for a conversation */
   async getConversation(conversationId) {
     if (!this.enabled) return [];
     const db = await this._getDb();
@@ -121,15 +88,12 @@ class NiyoXStorage {
       .toArray();
   }
 
-  /** List all conversation IDs for this user */
   async listConversations() {
     if (!this.enabled) return [];
     const db = await this._getDb();
-    return db.collection("messages")
-      .distinct("conversationId", { userId: this.userId });
+    return db.collection("messages").distinct("conversationId", { userId: this.userId });
   }
 
-  /** Delete a conversation */
   async deleteConversation(conversationId) {
     if (!this.enabled) return 0;
     const db  = await this._getDb();
@@ -137,7 +101,87 @@ class NiyoXStorage {
     return res.deletedCount;
   }
 
-  /** Save arbitrary key/value user preference */
+  // ── Persona persistence (v0.0.4) ─────────────────────────────────────────
+
+  /**
+   * Persist the user's preferred AI persona to MongoDB.
+   * Automatically applied by NiyoXAI.enableStorage() if the client has no persona set.
+   *
+   * @param {string|null} persona  Pass null to clear.
+   *
+   * @example
+   *   await store.savePersona("You are a friendly cooking assistant.");
+   */
+  async savePersona(persona) {
+    return this.setPref("__persona__", persona ?? null);
+  }
+
+  /**
+   * Load the persisted persona for this user.
+   * @returns {Promise<string|null>}
+   */
+  async getPersona() {
+    return this.getPref("__persona__", null);
+  }
+
+  // ── Conversation export (v0.0.4) ─────────────────────────────────────────
+
+  /**
+   * Export a stored conversation from MongoDB as a formatted string.
+   *
+   * @param {string}                    conversationId
+   * @param {"json"|"text"|"markdown"}  [format="json"]
+   * @returns {Promise<string>}
+   *
+   * @example
+   *   const md = await store.exportConversation("conv-abc-123", "markdown");
+   *   fs.writeFileSync("chat.md", md);
+   */
+  async exportConversation(conversationId, format = "json") {
+    const messages = await this.getConversation(conversationId);
+    const fmt      = String(format).toLowerCase();
+
+    if (fmt === "json") {
+      return JSON.stringify({
+        exportedAt:     new Date().toISOString(),
+        conversationId,
+        userId:         this.userId,
+        messages,
+      }, null, 2);
+    }
+
+    if (fmt === "text") {
+      const lines = [`Conversation: ${conversationId}\nUser: ${this.userId}\n`];
+      for (const m of messages) {
+        const ts    = m.createdAt ? new Date(m.createdAt).toLocaleString() : "";
+        const label = m.role === "user" ? "You" : "NiyoX AI";
+        const meta  = m.responseTime ? ` (${m.responseTime}ms)` : "";
+        lines.push(`[${ts}] ${label}${meta}:\n${m.content}\n`);
+      }
+      return lines.join("\n");
+    }
+
+    if (fmt === "markdown") {
+      const lines = [
+        `# NiyoX AI Conversation\n`,
+        `> **ID:** \`${conversationId}\`  `,
+        `> **User:** ${this.userId}  `,
+        `> **Exported:** ${new Date().toISOString()}\n\n---\n`,
+      ];
+      for (const m of messages) {
+        const ts    = m.createdAt ? new Date(m.createdAt).toLocaleString() : "";
+        const label = m.role === "user" ? "**You**" : "**NiyoX AI**";
+        const meta  = m.responseTime ? ` *(${m.responseTime}ms)*` : "";
+        lines.push(`### ${label} — ${ts}${meta}\n\n${m.content}\n`);
+      }
+      return lines.join("\n");
+    }
+
+    throw new Error(`Unknown export format "${format}". Use "json", "text", or "markdown".`);
+  }
+
+  // ── Preferences ───────────────────────────────────────────────────────────
+
   async setPref(key, value) {
     if (!this.enabled) return;
     const db = await this._getDb();
@@ -148,7 +192,6 @@ class NiyoXStorage {
     );
   }
 
-  /** Get a user preference */
   async getPref(key, defaultValue = null) {
     if (!this.enabled) return defaultValue;
     const db  = await this._getDb();
@@ -156,7 +199,8 @@ class NiyoXStorage {
     return doc ? doc.value : defaultValue;
   }
 
-  /** Usage statistics for this user */
+  // ── Stats ─────────────────────────────────────────────────────────────────
+
   async getStats() {
     if (!this.enabled) return null;
     const db   = await this._getDb();
@@ -170,9 +214,9 @@ class NiyoXStorage {
       ]).toArray(),
     ]);
     return {
-      totalMessages:       total,
-      totalConversations:  conversations.length,
-      avgResponseTimeMs:   avgTime[0]?.avg?.toFixed(0) ?? "N/A",
+      totalMessages:      total,
+      totalConversations: conversations.length,
+      avgResponseTimeMs:  avgTime[0]?.avg?.toFixed(0) ?? "N/A",
     };
   }
 
