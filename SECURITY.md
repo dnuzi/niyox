@@ -4,7 +4,9 @@
 
 | Version | Supported |
 |---|:---:|
-| 0.0.2 (latest) | ✅ |
+| 0.0.4 (latest) | ✅ |
+| 0.0.3 | ❌ |
+| 0.0.2 | ❌ |
 | 0.0.1 | ❌ |
 | < 0.0.1 | ❌ |
 
@@ -65,11 +67,22 @@ We ask that you give us a reasonable timeframe (typically **14 days**) to addres
   const ai = new NiyoXAI({ mongoUri: process.env.MONGO_URI });
   ```
 
+**Persona / system prompt (v0.0.4)**
+- The `persona` string is sent as plain text in the query parameter of every request (`q=...`). Do not include secrets, API keys, or sensitive user data in a persona string.
+- When storage is enabled, personas are persisted to MongoDB under the `user_prefs` collection. Apply the same access controls to this collection as to your `messages` collection.
+- Personas set via `<NiyoXChat>` or `useNiyoX()` originate in the browser and are visible in network requests. Do not rely on client-side persona strings as a security boundary.
+
+**Conversation export (v0.0.4)**
+- `exportConversation()` returns the full conversation history, including all user messages. Treat exported files as sensitive data — they may contain personal information typed by your users.
+- The ⬇ Export button in `<NiyoXChat>` triggers a client-side download directly in the user's browser; no data is sent to a third-party server during export.
+- When exporting from MongoDB via `NiyoXStorage.exportConversation()`, ensure the caller is authorised to access the conversation before calling the method — the storage layer does not perform its own authorisation check beyond matching `userId`.
+
 **API endpoint**
 - All AI requests are sent to `https://ai.dnuz.top/api/ai` over HTTPS. No API keys are required or transmitted by the client at this time.
 
 **React / browser client**
 - The React hook and browser client (`react/useNiyoX.js`, `html/index.html`) make requests directly from the browser to `ai.dnuz.top`. Do not proxy sensitive user data through this endpoint in production without your own server-side layer.
+- The `persona` and `maxHistory` options in `useNiyoX()` / `<NiyoXChat>` are client-side only and do not add any server-side access control.
 
 **No authentication layer**
 - The CLI and SDK do not authenticate the end user. Access controls are the responsibility of the deploying application.
