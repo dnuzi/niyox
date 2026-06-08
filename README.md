@@ -77,19 +77,6 @@ The package ships four layers you can use independently:
 
 ---
 
-## What's new in 0.0.3
-
-| # | Change |
-|---|---|
-| 🗄️ | **Custom MongoDB** — pass your own `mongoUri` + `dbName` anywhere |
-| ⚛️ | **React hook** — `useNiyoX()`, `<NiyoXChat>`, `<NiyoXProvider>` |
-| 🔷 | **Next.js** — App Router example with Tailwind |
-| ⚡ | **Vite** — vanilla JS example |
-| 💻 | **CLI** — `/mongo <url>` and `/mongourl <url>` commands |
-| 🗑️ | **Python SDK removed** — now maintained separately as `niyox-ai` on PyPI |
-
----
-
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
 
 ## Features
