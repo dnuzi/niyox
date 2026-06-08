@@ -1,6 +1,6 @@
 {
   "name": "niyox",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "NiyoX AI - Powered by DanuZz.",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
